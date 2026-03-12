@@ -1,8 +1,10 @@
 "use client";
 
 import ProductList from '../components/ProductList';
+import SearchBar from '../components/SearchBar';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef, Suspense } from 'react';
+import Link from 'next/link';
 
 export default function Home() {
   const containerRef = useRef(null);
@@ -69,14 +71,12 @@ export default function Home() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
           >
-            <button
-              onClick={() => {
-                document.getElementById('produtos')?.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className="bg-white text-black px-8 py-4 rounded-full font-bold text-sm tracking-widest uppercase hover:bg-zinc-200 transition-transform hover:scale-105 active:scale-95"
+            <Link
+              href="/produtos"
+              className="inline-block bg-white text-black px-8 py-4 rounded-full font-bold text-sm tracking-widest uppercase hover:bg-zinc-200 transition-transform hover:scale-105 active:scale-95"
             >
               Explorar Catálogo
-            </button>
+            </Link>
           </motion.div>
         </div>
 
@@ -138,6 +138,10 @@ export default function Home() {
           >
             Selecione a categoria e descubra as melhores opções.
           </motion.p>
+        </div>
+
+        <div className="px-6 mb-8 text-center">
+          <SearchBar />
         </div>
 
         <Suspense fallback={

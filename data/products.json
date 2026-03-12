@@ -1,0 +1,18 @@
+[
+  {
+    "id": "9e348ac7-deb2-4b78-b60d-a102f850200d",
+    "nome": "teste",
+    "preco": 2,
+    "valor": 1,
+    "foto": "/uploads/9e348ac7-deb2-4b78-b60d-a102f850200d.webp",
+    "categoria": "Item"
+  },
+  {
+    "id": "08a0dc6a-3170-4fb3-811c-6076c4fe082d",
+    "nome": "teste 2",
+    "preco": 2,
+    "valor": 3,
+    "foto": "/uploads/08a0dc6a-3170-4fb3-811c-6076c4fe082d.webp",
+    "categoria": "Item 2"
+  }
+]

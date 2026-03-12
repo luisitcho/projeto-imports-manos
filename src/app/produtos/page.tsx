@@ -1,4 +1,5 @@
 import ProductList from '../../components/ProductList';
+import SearchBar from '../../components/SearchBar';
 import { Suspense } from 'react';
 
 export default function ProdutosPage() {
@@ -11,6 +12,10 @@ export default function ProdutosPage() {
                 <p className="text-zinc-500 font-medium tracking-wide">
                     Explore todos os nossos produtos e lançamentos exclusivos.
                 </p>
+            </div>
+
+            <div className="px-6 mb-8 text-center max-w-7xl mx-auto">
+                <SearchBar />
             </div>
 
             <Suspense fallback={

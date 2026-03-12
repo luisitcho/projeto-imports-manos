@@ -40,10 +40,12 @@ export default function ProductList({ isCatalog = false, limit }: ProductListPro
         }
     }, [isCatalog, urlCategory]);
 
-    // Prevent hydration errors
+    const fetchProducts = useProductStore((state) => state.fetchProducts);
+
+    // Initial Fetch & Mount
     useEffect(() => {
-        setMounted(true);
-    }, []);
+        fetchProducts().finally(() => setMounted(true));
+    }, [fetchProducts]);
 
     // Handle ESC key
     useEffect(() => {
@@ -158,8 +160,8 @@ export default function ProductList({ isCatalog = false, limit }: ProductListPro
                             key={cat}
                             onClick={() => handleCategoryClick(cat)}
                             className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${selectedCategory === cat
-                                    ? "bg-white text-black shadow-lg scale-105 border border-white"
-                                    : "bg-zinc-900/80 text-zinc-400 border border-white/5 hover:bg-zinc-800 hover:text-white"
+                                ? "bg-white text-black shadow-lg scale-105 border border-white"
+                                : "bg-zinc-900/80 text-zinc-400 border border-white/5 hover:bg-zinc-800 hover:text-white"
                                 }`}
                         >
                             {cat}
@@ -265,8 +267,8 @@ export default function ProductList({ isCatalog = false, limit }: ProductListPro
                                 key={i}
                                 onClick={() => setCurrentPage(i + 1)}
                                 className={`w-8 h-8 rounded-full text-sm font-medium transition-colors flex items-center justify-center ${currentPage === i + 1
-                                        ? "bg-white text-black"
-                                        : "bg-transparent text-zinc-400 hover:bg-white/10 hover:text-white"
+                                    ? "bg-white text-black"
+                                    : "bg-transparent text-zinc-400 hover:bg-white/10 hover:text-white"
                                     }`}
                             >
                                 {i + 1}

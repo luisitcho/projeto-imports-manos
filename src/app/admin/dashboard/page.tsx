@@ -27,9 +27,11 @@ export default function AdminDashboardPage() {
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
+    const fetchProducts = useProductStore((state) => state.fetchProducts);
+
     useEffect(() => {
-        setMounted(true);
-    }, []);
+        fetchProducts().finally(() => setMounted(true));
+    }, [fetchProducts]);
 
     if (!mounted) {
         return (
@@ -44,7 +46,30 @@ export default function AdminDashboardPage() {
         if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
-                setFoto(reader.result as string);
+                const img = new Image();
+                img.src = reader.result as string;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 800;
+                    let w = img.width;
+                    let h = img.height;
+
+                    if (w > MAX_WIDTH) {
+                        h = Math.round((h * MAX_WIDTH) / w);
+                        w = MAX_WIDTH;
+                    }
+
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    if (ctx) {
+                        ctx.drawImage(img, 0, 0, w, h);
+                        const compressedBase64 = canvas.toDataURL('image/webp', 0.7); // Compress to 70% quality webp
+                        setFoto(compressedBase64);
+                    } else {
+                        setFoto(reader.result as string);
+                    }
+                };
             };
             reader.readAsDataURL(file);
         }
@@ -274,9 +299,12 @@ export default function AdminDashboardPage() {
                                                 </div>
                                             </div>
                                         ) : (
-                                            <div className="flex flex-col items-center gap-2 text-zinc-500">
+                                            <div className="flex flex-col items-center gap-2 text-zinc-500 text-center">
                                                 <ImagePlus className="w-10 h-10 mb-2" />
-                                                <span className="text-sm">Clique para upload da imagem</span>
+                                                <span className="text-sm font-medium text-white">Clique para upload da imagem</span>
+                                                <span className="text-xs text-zinc-600 mt-2 px-4">
+                                                    Sua imagem será automaticamente redimensionada e otimizada (WebP) para poupar o espaço do painel.
+                                                </span>
                                             </div>
                                         )}
                                     </div>
@@ -313,8 +341,8 @@ export default function AdminDashboardPage() {
                                                     type="button"
                                                     onClick={() => setCategoria(cat)}
                                                     className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${categoria.toLowerCase() === cat.toLowerCase()
-                                                            ? "bg-white text-black border-white"
-                                                            : "bg-zinc-800 text-zinc-400 border-zinc-700 hover:border-zinc-500 hover:text-white"
+                                                        ? "bg-white text-black border-white"
+                                                        : "bg-zinc-800 text-zinc-400 border-zinc-700 hover:border-zinc-500 hover:text-white"
                                                         }`}
                                                 >
                                                     {cat}
