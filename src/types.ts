@@ -4,4 +4,5 @@ export interface Product {
     preco: number;
     valor: number;
     foto: string;
+    categoria: string;
 }

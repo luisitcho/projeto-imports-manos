@@ -20,7 +20,10 @@ export default function AdminDashboardPage() {
     const [preco, setPreco] = useState("");
     const [valor, setValor] = useState("");
     const [foto, setFoto] = useState("");
+    const [categoria, setCategoria] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
+
+    const existingCategories = Array.from(new Set(products.map(p => p.categoria).filter(Boolean)));
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -53,6 +56,7 @@ export default function AdminDashboardPage() {
         setPreco("");
         setValor("");
         setFoto("");
+        setCategoria("");
         setIsFormOpen(true);
     };
 
@@ -62,26 +66,45 @@ export default function AdminDashboardPage() {
         setPreco(p.preco.toString());
         setValor(p.valor.toString());
         setFoto(p.foto);
+        setCategoria(p.categoria || "");
         setIsFormOpen(true);
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!nome || !preco || !valor || !foto) return;
+        if (!nome || !preco || !valor || !foto || !categoria) return;
+
+        const isDuplicate = products.some(
+            p => p.nome.toLowerCase().trim() === nome.toLowerCase().trim() && p.id !== editingId
+        );
+
+        if (isDuplicate) {
+            alert("Erro: Já existe um produto cadastrado com este nome exato.");
+            return;
+        }
+
+        // Mapeia e junta minúsculas/maiúsculas pra não duplicar categoria
+        const normalizedCategoria = categoria.trim();
+        const existingCategoryMatch = existingCategories.find(
+            c => c.toLowerCase() === normalizedCategoria.toLowerCase()
+        );
+        const finalCategoria = existingCategoryMatch || (normalizedCategoria.charAt(0).toUpperCase() + normalizedCategoria.slice(1).toLowerCase());
 
         if (editingId) {
             updateProduct(editingId, {
-                nome,
-                preco: parseFloat(preco),
-                valor: parseFloat(valor),
+                nome: nome.trim(),
+                preco: parseFloat(preco.toString().replace(',', '.')),
+                valor: parseFloat(valor.toString().replace(',', '.')),
                 foto,
+                categoria: finalCategoria,
             });
         } else {
             addProduct({
-                nome,
-                preco: parseFloat(preco),
-                valor: parseFloat(valor),
+                nome: nome.trim(),
+                preco: parseFloat(preco.toString().replace(',', '.')),
+                valor: parseFloat(valor.toString().replace(',', '.')),
                 foto,
+                categoria: finalCategoria,
             });
         }
         setIsFormOpen(false);
@@ -141,11 +164,12 @@ export default function AdminDashboardPage() {
                         <table className="w-full text-left border-collapse text-sm">
                             <thead>
                                 <tr className="border-b border-white/10 bg-zinc-900/30 text-zinc-400 font-medium hover:bg-zinc-900/50 transition-colors">
-                                    <th className="w-[10%] px-4 py-3 h-12 align-middle">Foto</th>
-                                    <th className="w-[35%] px-4 py-3 h-12 align-middle">Nome</th>
-                                    <th className="w-[20%] px-4 py-3 h-12 align-middle">Preço (R$)</th>
-                                    <th className="w-[25%] px-4 py-3 h-12 align-middle">Valor de mercado (R$)</th>
-                                    <th className="w-[10%] px-4 py-3 h-12 align-middle text-right">Ações</th>
+                                    <th className="w-[15%] px-4 py-3 h-12 align-middle">Foto</th>
+                                    <th className="w-[20%] px-4 py-3 h-12 align-middle">Nome</th>
+                                    <th className="w-[15%] px-4 py-3 h-12 align-middle">Categoria</th>
+                                    <th className="w-[15%] px-4 py-3 h-12 align-middle">Preço (R$)</th>
+                                    <th className="w-[15%] px-4 py-3 h-12 align-middle">Valor de mercado (R$)</th>
+                                    <th className="w-[20%] px-4 py-3 h-12 align-middle text-right">Ações</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-white/5">
@@ -172,6 +196,9 @@ export default function AdminDashboardPage() {
                                             </td>
                                             <td className="px-4 py-3 align-middle font-medium text-zinc-200">
                                                 {p.nome}
+                                            </td>
+                                            <td className="px-4 py-3 align-middle text-zinc-400">
+                                                <span className="px-2.5 py-1 rounded-full bg-zinc-800 text-xs font-medium border border-white/5">{p.categoria || "Sem Categoria"}</span>
                                             </td>
                                             <td className="px-4 py-3 align-middle text-white font-medium">
                                                 R$ {p.preco.toFixed(2)}
@@ -265,6 +292,36 @@ export default function AdminDashboardPage() {
                                         className="w-full bg-black/50 border border-zinc-700 focus:border-white rounded-lg py-2.5 px-4 text-white focus:outline-none focus:ring-1 focus:ring-white transition-colors"
                                         placeholder="Ex: Tênis Air Max 90"
                                     />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-zinc-400 mb-1">Categoria</label>
+                                    <input
+                                        required
+                                        type="text"
+                                        value={categoria}
+                                        onChange={(e) => setCategoria(e.target.value)}
+                                        className="w-full bg-black/50 border border-zinc-700 focus:border-white rounded-lg py-2.5 px-4 text-white focus:outline-none focus:ring-1 focus:ring-white transition-colors"
+                                        placeholder="Digite nova ou selecione abaixo..."
+                                        autoComplete="off"
+                                    />
+                                    {existingCategories.length > 0 && (
+                                        <div className="flex flex-wrap gap-2 mt-3 p-1">
+                                            {existingCategories.map((cat, idx) => (
+                                                <button
+                                                    key={idx}
+                                                    type="button"
+                                                    onClick={() => setCategoria(cat)}
+                                                    className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${categoria.toLowerCase() === cat.toLowerCase()
+                                                            ? "bg-white text-black border-white"
+                                                            : "bg-zinc-800 text-zinc-400 border-zinc-700 hover:border-zinc-500 hover:text-white"
+                                                        }`}
+                                                >
+                                                    {cat}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">
