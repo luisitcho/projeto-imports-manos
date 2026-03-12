@@ -141,11 +141,11 @@ export default function AdminDashboardPage() {
                         <table className="w-full text-left border-collapse text-sm">
                             <thead>
                                 <tr className="border-b border-white/10 bg-zinc-900/30 text-zinc-400 font-medium hover:bg-zinc-900/50 transition-colors">
-                                    <th className="px-4 py-3 h-12 align-middle">Foto</th>
-                                    <th className="px-4 py-3 h-12 align-middle">Nome</th>
-                                    <th className="px-4 py-3 h-12 align-middle">Preço (R$)</th>
-                                    <th className="px-4 py-3 h-12 align-middle">Valor de mercado (R$)</th>
-                                    <th className="px-4 py-3 h-12 align-middle text-right">Ações</th>
+                                    <th className="w-[10%] px-4 py-3 h-12 align-middle">Foto</th>
+                                    <th className="w-[35%] px-4 py-3 h-12 align-middle">Nome</th>
+                                    <th className="w-[20%] px-4 py-3 h-12 align-middle">Preço (R$)</th>
+                                    <th className="w-[25%] px-4 py-3 h-12 align-middle">Valor de mercado (R$)</th>
+                                    <th className="w-[10%] px-4 py-3 h-12 align-middle text-right">Ações</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-white/5">
